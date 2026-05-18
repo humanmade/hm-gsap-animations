@@ -42,9 +42,25 @@ The animation progress is tied 1-to-1 to the scroll position between **Start** a
 | `parallax-background` | Background image moves at a different speed than the scroll *(cover, group, column, media-text)* |
 | `split-words` | Each word enters individually with stagger *(heading + paragraph only)* |
 | `split-chars` | Each character enters individually with stagger *(heading + paragraph only)* |
+| `hover` | Plays on mouseenter, reverses on mouseleave. Skipped on touch devices. |
 
 ### Count-up
 Inspired by [Counting Number Block](https://wordpress.org/plugins/counting-number-block/). Finds the first number in the block's text and animates it from 0, preserving any prefix/suffix text (e.g. `"Over 5,000 clients"` → `"Over 0 clients"` → `"Over 5,000 clients"`).
+
+### Hover effect
+
+Creates a paused GSAP Timeline that `.play()`s on `mouseenter` and `.reverse()`s on `mouseleave`. Using a timeline (instead of two separate tweens) means the reverse always mirrors the exact forward motion — even if the user moves out before the animation finishes.
+
+| Effect | What it does |
+|---|---|
+| `lift` | Translates up + adds subtle box-shadow |
+| `grow` | Scales up to 1.05 |
+| `shrink` | Scales down to 0.95 |
+| `tilt` | 3D rotation (rotateY + rotateX) |
+| `brighten` | CSS `brightness(1.2)` filter |
+| `dim` | CSS `brightness(0.75)` + slight opacity |
+
+**Mobile fallback:** uses `window.matchMedia('(hover: hover)')` — a CSS media query that returns `true` only on devices with a pointer capable of hovering (mouse, trackpad). On touch-only screens it skips the animation entirely instead of attaching broken listeners.
 
 ### Split text
 
@@ -73,6 +89,7 @@ For `core/cover`: animates the inner `<img>`/`<video>` via `yPercent`. For block
 | Duration / Delay / Easing | Transition and count-up |
 | Stagger children | group, columns, gallery, list, buttons |
 | Stagger between elements (s) | split-words, split-chars |
+| Effect (lift, grow, shrink…) | hover |
 
 ---
 

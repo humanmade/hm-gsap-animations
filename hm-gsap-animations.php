@@ -193,6 +193,11 @@ function build_data_attrs_string( array $attrs ): string {
 	$out .= " data-gsap-scrub=\"{$scrub}\"";
 	$out .= " data-gsap-show-markers=\"{$show_markers}\"";
 
+	if ( ! empty( $attrs['gsapHoverEffect'] ) ) {
+		$hover_effect = esc_attr( $attrs['gsapHoverEffect'] );
+		$out         .= " data-gsap-hover-effect=\"{$hover_effect}\"";
+	}
+
 	if ( isset( $attrs['gsapParallaxSpeed'] ) ) {
 		$parallax_speed = esc_attr( $attrs['gsapParallaxSpeed'] );
 		$out           .= " data-gsap-parallax-speed=\"{$parallax_speed}\"";

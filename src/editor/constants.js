@@ -53,6 +53,20 @@ export const ANIMATION_OPTIONS = [
 	{ value: 'parallax-background', label: 'Parallax Background' },
 	{ value: 'split-words', label: 'Split — Words' },
 	{ value: 'split-chars', label: 'Split — Characters' },
+	{ value: 'hover', label: 'Hover Effect' },
+];
+
+/**
+ * Hover sub-effects — the TO state GSAP animates to on mouseenter,
+ * reversed on mouseleave via tl.reverse().
+ */
+export const HOVER_EFFECT_OPTIONS = [
+	{ value: 'lift', label: 'Lift' },
+	{ value: 'grow', label: 'Grow' },
+	{ value: 'shrink', label: 'Shrink' },
+	{ value: 'tilt', label: 'Tilt (3D)' },
+	{ value: 'brighten', label: 'Brighten' },
+	{ value: 'dim', label: 'Dim' },
 ];
 
 /**

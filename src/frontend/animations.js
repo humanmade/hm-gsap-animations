@@ -19,3 +19,16 @@ export const ANIMATION_PRESETS = {
 	// Per-character FROM state used by split-chars
 	'split-chars': { opacity: 0, y: 20 },
 };
+
+/**
+ * Hover effect TO states — GSAP animates the element TO this state on
+ * mouseenter, then reverses back to natural on mouseleave via tl.reverse().
+ */
+export const HOVER_PRESETS = {
+	lift:     { y: -12, boxShadow: '0 12px 24px rgba(0,0,0,0.15)' },
+	grow:     { scale: 1.05 },
+	shrink:   { scale: 0.95 },
+	tilt:     { rotateY: 8, rotateX: -4, transformPerspective: 800 },
+	brighten: { filter: 'brightness(1.2)' },
+	dim:      { filter: 'brightness(0.75)', opacity: 0.8 },
+};

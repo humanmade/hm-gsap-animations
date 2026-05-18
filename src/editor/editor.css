@@ -86,6 +86,12 @@
 	100% { opacity: 1; }
 }
 
+/* hover: gentle pulse to signal "this reacts to interaction" */
+@keyframes gsap-preview-hover {
+	0%, 100% { transform: translateY( 0 ) scale( 1 ); }
+	50%       { transform: translateY( -8px ) scale( 1.02 ); }
+}
+
 /* split: fade-up the whole block to suggest word-by-word entrance */
 @keyframes gsap-preview-split-words {
 	from { opacity: 0; transform: translateY( 20px ); }
@@ -115,6 +121,13 @@
 .gsap-preview--flip-x                { animation-name: gsap-preview-flip-x; }
 .gsap-preview--flip-y                { animation-name: gsap-preview-flip-y; }
 .gsap-preview--count-up              { animation-name: gsap-preview-count-up; }
+.gsap-preview--hover       {
+	animation-name: gsap-preview-hover;
+	animation-duration: 1.8s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+}
+
 .gsap-preview--split-words { animation-name: gsap-preview-split-words; }
 .gsap-preview--split-chars { animation-name: gsap-preview-split-chars; }
 

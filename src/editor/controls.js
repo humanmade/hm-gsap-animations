@@ -17,6 +17,7 @@ import {
 	ANIMATION_OPTIONS,
 	EASE_OPTIONS,
 	TRIGGER_OPTIONS,
+	HOVER_EFFECT_OPTIONS,
 } from './constants';
 import { blockSupportsFeature } from './utils';
 
@@ -51,6 +52,7 @@ export function GsapAnimationControls( { attributes, setAttributes, blockName } 
 	const isCountUp       = gsapAnimation === 'count-up';
 	const isParallax      = gsapAnimation === 'parallax-background';
 	const isSplit         = gsapAnimation === 'split-words' || gsapAnimation === 'split-chars';
+	const isHover         = gsapAnimation === 'hover';
 	const supportsStagger  = blockSupportsFeature( blockName, 'stagger' );
 	const supportsCountUp  = blockSupportsFeature( blockName, 'countUp' );
 	const supportsParallax = blockSupportsFeature( blockName, 'parallax' );
@@ -363,6 +365,40 @@ export function GsapAnimationControls( { attributes, setAttributes, blockName } 
 						/>
 					</>
 				) }
+				{ /* ── Hover effect controls ── */ }
+				{ hasAnimation && isHover && (
+					<>
+						<p style={ { fontSize: '12px', color: '#757575', margin: '0 0 16px' } }>
+							{ __( 'Plays on mouseenter, reverses on mouseleave. Skipped automatically on touch devices.', 'hm-gsap-animations' ) }
+						</p>
+
+						<SelectControl
+							label={ __( 'Effect', 'hm-gsap-animations' ) }
+							value={ attributes.gsapHoverEffect }
+							options={ HOVER_EFFECT_OPTIONS }
+							onChange={ ( value ) => setAttributes( { gsapHoverEffect: value } ) }
+						/>
+
+						<Divider />
+
+						<RangeControl
+							label={ __( 'Duration (s)', 'hm-gsap-animations' ) }
+							value={ gsapDuration }
+							onChange={ ( value ) => setAttributes( { gsapDuration: value } ) }
+							min={ 0.1 }
+							max={ 1 }
+							step={ 0.05 }
+						/>
+
+						<SelectControl
+							label={ __( 'Easing', 'hm-gsap-animations' ) }
+							value={ gsapEase }
+							options={ EASE_OPTIONS }
+							onChange={ ( value ) => setAttributes( { gsapEase: value } ) }
+						/>
+					</>
+				) }
+
 				{ /* ── Split text controls ── */ }
 				{ hasAnimation && isSplit && (
 					<>

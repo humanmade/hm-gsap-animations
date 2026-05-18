@@ -1,7 +1,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Splitting from 'splitting';
-import { ANIMATION_PRESETS } from './animations';
+import { ANIMATION_PRESETS, HOVER_PRESETS } from './animations';
 
 gsap.registerPlugin( ScrollTrigger );
 
@@ -175,6 +175,41 @@ function initCountUpAnimation( element ) {
 }
 
 /**
+ * Hover animation.
+ *
+ * Creates a paused GSAP Timeline that plays on mouseenter and reverses on
+ * mouseleave. Using a timeline (instead of two separate gsap.to() calls)
+ * means the reverse always mirrors the exact forward motion — even if the
+ * user moves out before the animation finishes.
+ *
+ * Mobile fallback: `(hover: hover)` is a CSS media query that returns true
+ * only on devices with a pointer that can hover (real mouse/trackpad). On
+ * touch-only screens it returns false, so we skip the animation entirely
+ * rather than attaching broken listeners.
+ */
+function initHoverAnimation( element ) {
+	// Skip on touch-only devices — hover doesn't exist there.
+	if ( ! window.matchMedia( '(hover: hover)' ).matches ) return;
+
+	const effect   = element.dataset.gsapHoverEffect || 'lift';
+	const toState  = HOVER_PRESETS[ effect ];
+	if ( ! toState ) return;
+
+	const duration = parseFloat( element.dataset.gsapDuration ) || 0.3;
+	const ease     = element.dataset.gsapEase || 'power2.out';
+
+	const tl = gsap.timeline( {
+		paused: true,
+		defaults: { duration, ease },
+	} );
+
+	tl.to( element, toState );
+
+	element.addEventListener( 'mouseenter', () => tl.play() );
+	element.addEventListener( 'mouseleave', () => tl.reverse() );
+}
+
+/**
  * Split-text animation (split-words / split-chars).
  *
  * Uses Splitting.js to wrap each word or character in a <span> at runtime.
@@ -284,7 +319,9 @@ function initGsapAnimations() {
 	document.querySelectorAll( '[data-gsap-animation]' ).forEach( ( element ) => {
 		const animation = element.dataset.gsapAnimation;
 
-		if ( animation === 'split-words' || animation === 'split-chars' ) {
+		if ( animation === 'hover' ) {
+			initHoverAnimation( element );
+		} else if ( animation === 'split-words' || animation === 'split-chars' ) {
 			initSplitAnimation( element );
 		} else if ( animation === 'parallax-background' ) {
 			initParallaxAnimation( element );

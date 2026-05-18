@@ -79,4 +79,9 @@ export const GSAP_ATTRIBUTES = {
 		type: 'number',
 		default: 20,
 	},
+	/** Hover sub-effect key (lift, grow, shrink, tilt, brighten, dim). */
+	gsapHoverEffect: {
+		type: 'string',
+		default: 'lift',
+	},
 };
