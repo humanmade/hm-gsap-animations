@@ -1,0 +1,22 @@
+{
+	"name": "hm-gsap-animations",
+	"version": "1.0.0",
+	"description": "GSAP animation controls for WordPress block editor.",
+	"author": "Human Made Limited",
+	"license": "GPL-2.0-or-later",
+	"scripts": {
+		"build": "webpack --config webpack.config.js",
+		"start": "webpack --config webpack.config.js --watch",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"release": "git fetch origin && git checkout release && git reset origin/main --hard && npm run build && git add -f build && git commit -m 'Release build' --no-verify && git push origin release --force && git checkout -"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^30.10.0"
+	},
+	"dependencies": {
+		"gsap": "^3.12.5"
+	}
+}

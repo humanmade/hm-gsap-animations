@@ -1,0 +1,100 @@
+/* ── Inspector panel ─────────────────────────────────────────────────────── */
+
+.hm-gsap-panel .components-panel__body-title button {
+	font-weight: 600;
+}
+
+/* ── Editor canvas preview animations ───────────────────────────────────────
+ *
+ * Applied via the editor.BlockListBlock filter (with-preview.js).
+ *
+ * Why CSS and not GSAP?
+ * CSS animations run on the browser's compositor thread (GPU) with zero JS
+ * overhead. Swapping the animation class (gsap-preview--fade-up →
+ * gsap-preview--zoom-in) restarts the browser animation automatically, giving
+ * instant feedback as the user explores options.
+ *
+ * Easing approximations for GSAP's power2.out:
+ *   cubic-bezier(0.215, 0.61, 0.355, 1)
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+	--gsap-preview-duration: 0.7s;
+	--gsap-preview-ease: cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Shared: all previews use the same duration + easing */
+.has-gsap-preview[class*="gsap-preview--"] {
+	animation-duration: var(--gsap-preview-duration);
+	animation-timing-function: var(--gsap-preview-ease);
+	animation-fill-mode: both;
+	/* Slight delay so the user sees the starting state */
+	animation-delay: 0.05s;
+}
+
+/* ── Keyframes ─────────────────────────────────────────────────────────── */
+
+@keyframes gsap-preview-fade-in {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@keyframes gsap-preview-fade-up {
+	from { opacity: 0; transform: translateY( 40px ); }
+	to   { opacity: 1; transform: translateY( 0 ); }
+}
+
+@keyframes gsap-preview-fade-down {
+	from { opacity: 0; transform: translateY( -40px ); }
+	to   { opacity: 1; transform: translateY( 0 ); }
+}
+
+@keyframes gsap-preview-fade-left {
+	from { opacity: 0; transform: translateX( 40px ); }
+	to   { opacity: 1; transform: translateX( 0 ); }
+}
+
+@keyframes gsap-preview-fade-right {
+	from { opacity: 0; transform: translateX( -40px ); }
+	to   { opacity: 1; transform: translateX( 0 ); }
+}
+
+@keyframes gsap-preview-zoom-in {
+	from { opacity: 0; transform: scale( 0.85 ); }
+	to   { opacity: 1; transform: scale( 1 ); }
+}
+
+@keyframes gsap-preview-zoom-out {
+	from { opacity: 0; transform: scale( 1.15 ); }
+	to   { opacity: 1; transform: scale( 1 ); }
+}
+
+@keyframes gsap-preview-flip-x {
+	from { opacity: 0; transform: perspective( 800px ) rotateX( 90deg ); }
+	to   { opacity: 1; transform: perspective( 800px ) rotateX( 0deg ); }
+}
+
+@keyframes gsap-preview-flip-y {
+	from { opacity: 0; transform: perspective( 800px ) rotateY( 90deg ); }
+	to   { opacity: 1; transform: perspective( 800px ) rotateY( 0deg ); }
+}
+
+/* count-up: no spatial movement — pulse to signal "a number will animate" */
+@keyframes gsap-preview-count-up {
+	0%   { opacity: 0.3; }
+	50%  { opacity: 1; }
+	100% { opacity: 1; }
+}
+
+/* ── Class → keyframe mapping ──────────────────────────────────────────── */
+
+.gsap-preview--fade-in    { animation-name: gsap-preview-fade-in; }
+.gsap-preview--fade-up    { animation-name: gsap-preview-fade-up; }
+.gsap-preview--fade-down  { animation-name: gsap-preview-fade-down; }
+.gsap-preview--fade-left  { animation-name: gsap-preview-fade-left; }
+.gsap-preview--fade-right { animation-name: gsap-preview-fade-right; }
+.gsap-preview--zoom-in    { animation-name: gsap-preview-zoom-in; }
+.gsap-preview--zoom-out   { animation-name: gsap-preview-zoom-out; }
+.gsap-preview--flip-x     { animation-name: gsap-preview-flip-x; }
+.gsap-preview--flip-y     { animation-name: gsap-preview-flip-y; }
+.gsap-preview--count-up   { animation-name: gsap-preview-count-up; }
