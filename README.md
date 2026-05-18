@@ -37,11 +37,15 @@ The animation progress is tied 1-to-1 to the scroll position between **Start** a
 | `zoom-in` | Scale up from 85% + fade |
 | `zoom-out` | Scale down from 115% + fade |
 | `flip-x` | 3D horizontal flip |
-| `flip-y` | 3D vertical flip |
+| `flip-y` | 3D vertical vertical flip |
 | `count-up` | Counts a number from 0 to the block's value *(heading + paragraph only)* |
+| `parallax-background` | Background image moves at a different speed than the scroll *(cover, group, column, media-text)* |
 
 ### Count-up
 Inspired by [Counting Number Block](https://wordpress.org/plugins/counting-number-block/). Finds the first number in the block's text and animates it from 0, preserving any prefix/suffix text (e.g. `"Over 5,000 clients"` → `"Over 0 clients"` → `"Over 5,000 clients"`).
+
+### Parallax background
+For `core/cover`: animates the inner `<img>`/`<video>` via `yPercent`. For blocks with a CSS `background-image` (group, column): animates `backgroundPositionY`. Both use GSAP ScrollTrigger scrub.
 
 ---
 
@@ -49,15 +53,16 @@ Inspired by [Counting Number Block](https://wordpress.org/plugins/counting-numbe
 
 | Control | Applies to |
 |---|---|
-| Animation type | All modes |
-| Mode: Transition / Scroll Scrub | All except count-up |
+| Animation type | All |
+| Mode: Transition / Scroll Scrub | All except count-up and parallax |
+| Parallax speed (5–50) | `parallax-background` only |
 | Scroll Start (e.g. `"top 80%"`) | Scroll-based modes |
-| Scroll End (e.g. `"top 20%"`) | Scrub mode only |
-| Scrub smoothing (0–3 s) | Scrub mode only |
+| Scroll End (e.g. `"bottom top"`) | Scrub and parallax |
+| Scrub smoothing (0–3 s) | Scrub and parallax |
 | Show markers (debug) | Scroll-based modes |
-| Trigger: On Scroll / On Page Load | Transition mode |
+| Trigger: On Scroll / On Page Load | Transition and count-up |
 | Animate once | Scroll trigger only |
-| Duration / Delay / Easing | Transition mode |
+| Duration / Delay / Easing | Transition and count-up |
 | Stagger children | group, columns, gallery, list, buttons |
 
 ---
@@ -68,23 +73,29 @@ Inspired by [Counting Number Block](https://wordpress.org/plugins/counting-numbe
 
 ---
 
+## Editor preview
+
+When an animation is selected, the block plays a lightweight **CSS preview** in the editor canvas. Switching animation types restarts the preview automatically (the browser detects the `animation-name` change). No GSAP runs in the editor — CSS animations are GPU-accelerated with zero JS overhead.
+
+---
+
 ## Supported blocks (out of the box)
 
-| Block | Stagger | Count-up |
-|---|---|---|
-| `core/group` | ✅ | — |
-| `core/columns` | ✅ | — |
-| `core/column` | — | — |
-| `core/paragraph` | — | ✅ |
-| `core/heading` | — | ✅ |
-| `core/image` | — | — |
-| `core/gallery` | ✅ | — |
-| `core/cover` | — | — |
-| `core/media-text` | — | — |
-| `core/list` | ✅ | — |
-| `core/buttons` | ✅ | — |
-| `core/quote` | — | — |
-| `core/separator` | — | — |
+| Block | Stagger | Count-up | Parallax |
+|---|---|---|---|
+| `core/group` | ✅ | — | ✅ |
+| `core/columns` | ✅ | — | — |
+| `core/column` | — | — | ✅ |
+| `core/paragraph` | — | ✅ | — |
+| `core/heading` | — | ✅ | — |
+| `core/image` | — | — | — |
+| `core/gallery` | ✅ | — | — |
+| `core/cover` | — | — | ✅ |
+| `core/media-text` | — | — | ✅ |
+| `core/list` | ✅ | — | — |
+| `core/buttons` | ✅ | — | — |
+| `core/quote` | — | — | — |
+| `core/separator` | — | — | — |
 
 ---
 
@@ -101,9 +112,51 @@ npm run start   # watch mode for development
 
 ## Extending to custom blocks
 
-### Add a block to the supported list
+There are two ways to add support for a custom block. Use whichever fits your workflow.
 
-One PHP filter is all that's needed. It feeds both the editor JS (controls + attribute registration) and the PHP renderer.
+---
+
+### Option A — `block.json` supports (recommended)
+
+Declare support directly in the block's `block.json`. The plugin detects it automatically on both the PHP and JS sides — **no filter, no extra configuration needed**.
+
+```json
+{
+  "name": "my-plugin/hero",
+  "supports": {
+    "hmGsapAnimations": true
+  }
+}
+```
+
+This enables all standard animations (fade, zoom, flip, scrub). To also enable specific features, pass an object instead of `true`:
+
+```json
+{
+  "name": "my-plugin/stats-card",
+  "supports": {
+    "hmGsapAnimations": {
+      "stagger": true,
+      "countUp": true,
+      "parallax": true
+    }
+  }
+}
+```
+
+| Feature key | What it enables |
+|---|---|
+| `stagger` | "Animate children one by one" toggle in the Inspector |
+| `countUp` | `count-up` option in the animation dropdown |
+| `parallax` | `parallax-background` option in the animation dropdown |
+
+> **How it works:** On the PHP side, `get_all_supported_blocks()` scans `WP_Block_Type_Registry` at enqueue time and auto-includes any block with `hmGsapAnimations` in its supports. On the JS side, the `blocks.registerBlockType` filter reads `settings.supports.hmGsapAnimations` at registration time, and the HOCs use `getBlockType(name)?.supports?.hmGsapAnimations` at render time.
+
+---
+
+### Option B — PHP filter
+
+For blocks you don't control (third-party plugins), or when you prefer to centralise the configuration in your theme/mu-plugin:
 
 ```php
 add_filter( 'hm_gsap_animations_supported_blocks', function ( array $blocks ): array {
@@ -124,13 +177,7 @@ add_filter( 'hm_gsap_animations_supported_blocks', function ( array $blocks ): a
 } );
 ```
 
-### Enable count-up on a custom block
-
-`count-up` is only shown in the dropdown for `core/heading` and `core/paragraph`. To enable it for a custom block, add your block name to `COUNT_UP_SUPPORTED_BLOCKS` in `src/editor/constants.js`, or fork the controls to add conditional logic.
-
-### Enable stagger on a custom block
-
-Same approach — add your block to `STAGGER_SUPPORTED_BLOCKS` in `src/editor/constants.js`.
+> Note: the PHP filter only adds blocks to the base supported list. Feature flags (stagger, countUp, parallax) for PHP-filtered blocks still follow the hardcoded core lists — to enable extra features for a custom block via PHP, use the `block.json` approach above.
 
 ---
 
@@ -148,9 +195,10 @@ The PHP `render_block` filter injects these on the outermost element:
 | `data-gsap-ease` | `power2.out` | GSAP ease string |
 | `data-gsap-animate-once` | `true` | Play once or re-trigger on re-entry |
 | `data-gsap-scroll-start` | `top 80%` | ScrollTrigger `start` value |
-| `data-gsap-scroll-end` | `top 20%` | ScrollTrigger `end` (scrub mode) |
+| `data-gsap-scroll-end` | `bottom top` | ScrollTrigger `end` (scrub + parallax) |
 | `data-gsap-scrub` | `1` | Scrub smoothing lag (s) |
 | `data-gsap-show-markers` | `false` | Enable debug markers |
+| `data-gsap-parallax-speed` | `20` | Parallax movement intensity (5–50) |
 | `data-gsap-stagger` | `0.15` | Delay between staggered children |
 | `data-gsap-stagger-target` | `children` | CSS selector for stagger targets |
 
@@ -174,6 +222,16 @@ export const ANIMATION_PRESETS = {
     // ...
     'rotate-in': { opacity: 0, rotation: -180, transformOrigin: 'center center' },
 };
+```
+
+**3. Add the editor CSS preview** — `src/editor/editor.css`:
+
+```css
+@keyframes gsap-preview-rotate-in {
+    from { opacity: 0; transform: rotate(-180deg); }
+    to   { opacity: 1; transform: rotate(0deg); }
+}
+.gsap-preview--rotate-in { animation-name: gsap-preview-rotate-in; }
 ```
 
 Rebuild with `npm run build`. No PHP changes needed.

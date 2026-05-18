@@ -17,10 +17,8 @@ import {
 	ANIMATION_OPTIONS,
 	EASE_OPTIONS,
 	TRIGGER_OPTIONS,
-	STAGGER_SUPPORTED_BLOCKS,
-	COUNT_UP_SUPPORTED_BLOCKS,
-	PARALLAX_SUPPORTED_BLOCKS,
 } from './constants';
+import { blockSupportsFeature } from './utils';
 
 /**
  * GSAP animation Inspector panel for any supported block.
@@ -52,16 +50,14 @@ export function GsapAnimationControls( { attributes, setAttributes, blockName } 
 	const isScrollBased   = isScrub || gsapTrigger === 'scroll';
 	const isCountUp       = gsapAnimation === 'count-up';
 	const isParallax      = gsapAnimation === 'parallax-background';
-	const supportsStagger = STAGGER_SUPPORTED_BLOCKS.includes( blockName );
+	const supportsStagger  = blockSupportsFeature( blockName, 'stagger' );
+	const supportsCountUp  = blockSupportsFeature( blockName, 'countUp' );
+	const supportsParallax = blockSupportsFeature( blockName, 'parallax' );
 
 	// Filter animation options based on what this block type supports.
 	const animationOptions = ANIMATION_OPTIONS.filter( ( o ) => {
-		if ( o.value === 'count-up' && ! COUNT_UP_SUPPORTED_BLOCKS.includes( blockName ) ) {
-			return false;
-		}
-		if ( o.value === 'parallax-background' && ! PARALLAX_SUPPORTED_BLOCKS.includes( blockName ) ) {
-			return false;
-		}
+		if ( o.value === 'count-up' && ! supportsCountUp ) return false;
+		if ( o.value === 'parallax-background' && ! supportsParallax ) return false;
 		return true;
 	} );
 

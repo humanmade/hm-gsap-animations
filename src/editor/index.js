@@ -6,18 +6,22 @@ import { withAnimationPreview } from './with-preview';
 import './editor.css';
 
 /**
- * Resolve the supported blocks list.
- * PHP passes this via wp_localize_script so it can be filtered server-side.
- */
-function getSupportedBlocks() {
-	return window?.hmGsapAnimations?.supportedBlocks ?? DEFAULT_SUPPORTED_BLOCKS;
-}
-
-/**
  * Filter: add GSAP attributes to supported block type definitions.
+ *
+ * A block is supported if it is either:
+ * 1. In the PHP-filtered window.hmGsapAnimations.supportedBlocks list, or
+ * 2. Declares `"supports": { "hmGsapAnimations": true }` in its block.json.
+ *
+ * Note: we read `settings.supports.hmGsapAnimations` directly here because
+ * `blocks.registerBlockType` receives the full block definition as `settings`,
+ * making this the earliest and most reliable detection point.
  */
 function addGsapAttributes( settings, name ) {
-	if ( ! getSupportedBlocks().includes( name ) ) {
+	const phpList  = window?.hmGsapAnimations?.supportedBlocks ?? DEFAULT_SUPPORTED_BLOCKS;
+	const inPhpList = phpList.includes( name );
+	const hasBlockJsonSupport = !! settings.supports?.hmGsapAnimations;
+
+	if ( ! inPhpList && ! hasBlockJsonSupport ) {
 		return settings;
 	}
 

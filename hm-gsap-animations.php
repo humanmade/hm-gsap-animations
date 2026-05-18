@@ -44,6 +44,33 @@ function get_default_supported_blocks(): array {
 }
 
 /**
+ * Returns the full supported blocks list, combining three sources:
+ *
+ * 1. Default core blocks (get_default_supported_blocks).
+ * 2. Blocks added via the `hm_gsap_animations_supported_blocks` PHP filter.
+ * 3. Any registered block type that declares
+ *    `"supports": { "hmGsapAnimations": true }` in its block.json —
+ *    detected automatically from the block registry, no filter needed.
+ */
+function get_all_supported_blocks(): array {
+	$blocks = apply_filters(
+		'hm_gsap_animations_supported_blocks',
+		get_default_supported_blocks()
+	);
+
+	$registry = WP_Block_Type_Registry::get_instance();
+
+	foreach ( $registry->get_all_registered() as $name => $block_type ) {
+		$supports = $block_type->supports ?? [];
+		if ( ! empty( $supports['hmGsapAnimations'] ) && ! in_array( $name, $blocks, true ) ) {
+			$blocks[] = $name;
+		}
+	}
+
+	return $blocks;
+}
+
+/**
  * Enqueue block editor script + styles and pass config to JS.
  */
 function enqueue_editor_assets(): void {
@@ -70,15 +97,10 @@ function enqueue_editor_assets(): void {
 		);
 	}
 
-	$supported_blocks = apply_filters(
-		'hm_gsap_animations_supported_blocks',
-		get_default_supported_blocks()
-	);
-
 	wp_localize_script(
 		'hm-gsap-animations-editor',
 		'hmGsapAnimations',
-		[ 'supportedBlocks' => array_values( $supported_blocks ) ]
+		[ 'supportedBlocks' => array_values( get_all_supported_blocks() ) ]
 	);
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\enqueue_editor_assets' );

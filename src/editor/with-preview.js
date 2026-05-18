@@ -1,4 +1,5 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { isBlockSupported } from './utils';
 
 /**
  * HOC applied to editor.BlockListBlock.
@@ -7,11 +8,8 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  * play a lightweight CSS preview animation whenever the editor user selects or
  * changes a GSAP animation type.
  *
- * Why CSS instead of GSAP?
- * - GSAP instances accumulate on every React re-render and are never cleaned up.
- * - CSS animations run on the browser compositor thread (GPU) — zero JS cost.
- * - Changing `animation-name` via a class swap naturally restarts the animation,
- *   so switching from "fade-up" to "zoom-in" replays the preview for free.
+ * Uses `isBlockSupported()` — resolves support via the PHP list OR the block's
+ * own `supports.hmGsapAnimations` declaration in block.json.
  */
 export const withAnimationPreview = createHigherOrderComponent(
 	( BlockListBlock ) =>
@@ -19,8 +17,7 @@ export const withAnimationPreview = createHigherOrderComponent(
 			const { name, attributes } = props;
 			const animation = attributes?.gsapAnimation;
 
-			const supported = window?.hmGsapAnimations?.supportedBlocks ?? [];
-			if ( ! animation || animation === 'none' || ! supported.includes( name ) ) {
+			if ( ! animation || animation === 'none' || ! isBlockSupported( name ) ) {
 				return <BlockListBlock { ...props } />;
 			}
 
