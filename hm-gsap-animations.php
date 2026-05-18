@@ -58,7 +58,7 @@ function get_all_supported_blocks(): array {
 		get_default_supported_blocks()
 	);
 
-	$registry = WP_Block_Type_Registry::get_instance();
+	$registry = \WP_Block_Type_Registry::get_instance();
 
 	foreach ( $registry->get_all_registered() as $name => $block_type ) {
 		$supports = $block_type->supports ?? [];
