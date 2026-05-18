@@ -19,6 +19,7 @@ import {
 	TRIGGER_OPTIONS,
 	STAGGER_SUPPORTED_BLOCKS,
 	COUNT_UP_SUPPORTED_BLOCKS,
+	PARALLAX_SUPPORTED_BLOCKS,
 } from './constants';
 
 /**
@@ -46,16 +47,23 @@ export function GsapAnimationControls( { attributes, setAttributes, blockName } 
 		gsapStaggerTarget,
 	} = attributes;
 
-	const hasAnimation   = gsapAnimation && gsapAnimation !== 'none';
-	const isScrub        = gsapMode === 'scrub';
-	const isScrollBased  = isScrub || gsapTrigger === 'scroll';
-	const isCountUp      = gsapAnimation === 'count-up';
+	const hasAnimation    = gsapAnimation && gsapAnimation !== 'none';
+	const isScrub         = gsapMode === 'scrub';
+	const isScrollBased   = isScrub || gsapTrigger === 'scroll';
+	const isCountUp       = gsapAnimation === 'count-up';
+	const isParallax      = gsapAnimation === 'parallax-background';
 	const supportsStagger = STAGGER_SUPPORTED_BLOCKS.includes( blockName );
 
-	// Filter out count-up if block doesn't support it.
-	const animationOptions = COUNT_UP_SUPPORTED_BLOCKS.includes( blockName )
-		? ANIMATION_OPTIONS
-		: ANIMATION_OPTIONS.filter( ( o ) => o.value !== 'count-up' );
+	// Filter animation options based on what this block type supports.
+	const animationOptions = ANIMATION_OPTIONS.filter( ( o ) => {
+		if ( o.value === 'count-up' && ! COUNT_UP_SUPPORTED_BLOCKS.includes( blockName ) ) {
+			return false;
+		}
+		if ( o.value === 'parallax-background' && ! PARALLAX_SUPPORTED_BLOCKS.includes( blockName ) ) {
+			return false;
+		}
+		return true;
+	} );
 
 	const animationLabel = ANIMATION_OPTIONS.find( ( o ) => o.value === gsapAnimation )?.label;
 	const panelTitle     = hasAnimation
@@ -243,6 +251,58 @@ export function GsapAnimationControls( { attributes, setAttributes, blockName } 
 				) }
 
 				{ /* ── Count-up controls ── */ }
+				{ /* ── Parallax background controls ── */ }
+				{ hasAnimation && isParallax && (
+					<>
+						<RangeControl
+							label={ __( 'Speed', 'hm-gsap-animations' ) }
+							help={ __(
+								'How much the background moves as the element crosses the viewport. Higher = more depth.',
+								'hm-gsap-animations'
+							) }
+							value={ attributes.gsapParallaxSpeed }
+							onChange={ ( value ) =>
+								setAttributes( { gsapParallaxSpeed: value } )
+							}
+							min={ 5 }
+							max={ 50 }
+							step={ 1 }
+						/>
+
+						<Divider />
+						<SectionLabel>{ __( 'Scroll Position', 'hm-gsap-animations' ) }</SectionLabel>
+
+						<TextControl
+							label={ __( 'Start', 'hm-gsap-animations' ) }
+							help={ __( 'When parallax begins — e.g. "top bottom"', 'hm-gsap-animations' ) }
+							value={ gsapScrollStart }
+							onChange={ ( value ) => setAttributes( { gsapScrollStart: value } ) }
+						/>
+
+						<TextControl
+							label={ __( 'End', 'hm-gsap-animations' ) }
+							help={ __( 'When parallax ends — e.g. "bottom top"', 'hm-gsap-animations' ) }
+							value={ gsapScrollEnd }
+							onChange={ ( value ) => setAttributes( { gsapScrollEnd: value } ) }
+						/>
+
+						<RangeControl
+							label={ __( 'Scrub smoothing (s)', 'hm-gsap-animations' ) }
+							value={ gsapScrub }
+							onChange={ ( value ) => setAttributes( { gsapScrub: value } ) }
+							min={ 0 }
+							max={ 3 }
+							step={ 0.1 }
+						/>
+
+						<ToggleControl
+							label={ __( 'Show markers (debug)', 'hm-gsap-animations' ) }
+							checked={ gsapShowMarkers }
+							onChange={ ( value ) => setAttributes( { gsapShowMarkers: value } ) }
+						/>
+					</>
+				) }
+
 				{ hasAnimation && isCountUp && (
 					<>
 						<SelectControl

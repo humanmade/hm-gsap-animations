@@ -17,6 +17,18 @@ export const COUNT_UP_SUPPORTED_BLOCKS = [
 	'core/paragraph',
 ];
 
+/**
+ * Blocks that support parallax-background.
+ * core/cover  → animates the inner <img>/<video> element via yPercent.
+ * Others      → animates backgroundPositionY on the block wrapper.
+ */
+export const PARALLAX_SUPPORTED_BLOCKS = [
+	'core/cover',
+	'core/group',
+	'core/column',
+	'core/media-text',
+];
+
 export const ANIMATION_OPTIONS = [
 	{ value: 'none', label: '— None —' },
 	{ value: 'fade-in', label: 'Fade In' },
@@ -29,6 +41,7 @@ export const ANIMATION_OPTIONS = [
 	{ value: 'flip-x', label: 'Flip Horizontal' },
 	{ value: 'flip-y', label: 'Flip Vertical' },
 	{ value: 'count-up', label: 'Count Up (numbers)' },
+	{ value: 'parallax-background', label: 'Parallax Background' },
 ];
 
 /**

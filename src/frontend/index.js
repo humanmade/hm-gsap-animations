@@ -173,6 +173,59 @@ function initCountUpAnimation( element ) {
 	gsap.to( counter, tweenVars );
 }
 
+/**
+ * Parallax background animation.
+ *
+ * Two strategies depending on the block type:
+ *
+ * 1. core/cover  — has a real <img> or <video> positioned absolutely inside.
+ *    We animate its `yPercent` (vertical translate relative to its own height).
+ *    The image already fills the container via object-fit: cover, so a small
+ *    yPercent shift creates the depth illusion without showing empty space.
+ *
+ * 2. CSS background-image (core/group, core/column, etc.) — we animate
+ *    `backgroundPositionY` symmetrically around the current centre (50%).
+ */
+function initParallaxAnimation( element ) {
+	const speed       = parseFloat( element.dataset.gsapParallaxSpeed ) || 20;
+	const half        = speed / 2;
+	const scrub       = parseFloat( element.dataset.gsapScrub ?? 1 );
+	const showMarkers = element.dataset.gsapShowMarkers === 'true';
+
+	const scrollTrigger = {
+		trigger: element,
+		start: element.dataset.gsapScrollStart || 'top bottom',
+		end: element.dataset.gsapScrollEnd || 'bottom top',
+		scrub,
+		markers: showMarkers,
+	};
+
+	// Strategy 1 — core/cover img or video background.
+	const bgMedia = element.querySelector(
+		'.wp-block-cover__image-background, .wp-block-cover__video-background'
+	);
+
+	if ( bgMedia ) {
+		// Animate from shifted-up to shifted-down as element crosses the viewport.
+		// The image is already larger than the container (object-fit: cover) so
+		// a ±half% translate doesn't expose edges at moderate speed values.
+		gsap.fromTo(
+			bgMedia,
+			{ yPercent: -half },
+			{ yPercent: half, ease: 'none', scrollTrigger }
+		);
+		return;
+	}
+
+	// Strategy 2 — CSS background-image.
+	// backgroundPositionY 50% = centred. We shift symmetrically around that.
+	gsap.fromTo(
+		element,
+		{ backgroundPositionY: `${ 50 - half }%` },
+		{ backgroundPositionY: `${ 50 + half }%`, ease: 'none', scrollTrigger }
+	);
+}
+
 // ─── Main init ────────────────────────────────────────────────────────────────
 
 function initGsapAnimations() {
@@ -181,7 +234,9 @@ function initGsapAnimations() {
 	document.querySelectorAll( '[data-gsap-animation]' ).forEach( ( element ) => {
 		const animation = element.dataset.gsapAnimation;
 
-		if ( animation === 'count-up' ) {
+		if ( animation === 'parallax-background' ) {
+			initParallaxAnimation( element );
+		} else if ( animation === 'count-up' ) {
 			initCountUpAnimation( element );
 		} else {
 			initPresetAnimation( element );

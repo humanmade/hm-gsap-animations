@@ -86,15 +86,28 @@
 	100% { opacity: 1; }
 }
 
+/* parallax: slow vertical drift to suggest background movement */
+@keyframes gsap-preview-parallax-background {
+	from { background-position: center 40%; }
+	to   { background-position: center 60%; }
+}
+
 /* ── Class → keyframe mapping ──────────────────────────────────────────── */
 
-.gsap-preview--fade-in    { animation-name: gsap-preview-fade-in; }
-.gsap-preview--fade-up    { animation-name: gsap-preview-fade-up; }
-.gsap-preview--fade-down  { animation-name: gsap-preview-fade-down; }
-.gsap-preview--fade-left  { animation-name: gsap-preview-fade-left; }
-.gsap-preview--fade-right { animation-name: gsap-preview-fade-right; }
-.gsap-preview--zoom-in    { animation-name: gsap-preview-zoom-in; }
-.gsap-preview--zoom-out   { animation-name: gsap-preview-zoom-out; }
-.gsap-preview--flip-x     { animation-name: gsap-preview-flip-x; }
-.gsap-preview--flip-y     { animation-name: gsap-preview-flip-y; }
-.gsap-preview--count-up   { animation-name: gsap-preview-count-up; }
+.gsap-preview--fade-in               { animation-name: gsap-preview-fade-in; }
+.gsap-preview--fade-up               { animation-name: gsap-preview-fade-up; }
+.gsap-preview--fade-down             { animation-name: gsap-preview-fade-down; }
+.gsap-preview--fade-left             { animation-name: gsap-preview-fade-left; }
+.gsap-preview--fade-right            { animation-name: gsap-preview-fade-right; }
+.gsap-preview--zoom-in               { animation-name: gsap-preview-zoom-in; }
+.gsap-preview--zoom-out              { animation-name: gsap-preview-zoom-out; }
+.gsap-preview--flip-x                { animation-name: gsap-preview-flip-x; }
+.gsap-preview--flip-y                { animation-name: gsap-preview-flip-y; }
+.gsap-preview--count-up              { animation-name: gsap-preview-count-up; }
+.gsap-preview--parallax-background   {
+	animation-name: gsap-preview-parallax-background;
+	animation-duration: 2s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}

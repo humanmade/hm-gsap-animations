@@ -71,4 +71,12 @@ export const GSAP_ATTRIBUTES = {
 		type: 'string',
 		default: 'children',
 	},
+	/**
+	 * Parallax speed/intensity. Higher = more movement.
+	 * The background travels `speed`% of its size as the element crosses the viewport.
+	 */
+	gsapParallaxSpeed: {
+		type: 'number',
+		default: 20,
+	},
 };
