@@ -50,14 +50,17 @@ export function GsapAnimationControls( { attributes, setAttributes, blockName } 
 	const isScrollBased   = isScrub || gsapTrigger === 'scroll';
 	const isCountUp       = gsapAnimation === 'count-up';
 	const isParallax      = gsapAnimation === 'parallax-background';
+	const isSplit         = gsapAnimation === 'split-words' || gsapAnimation === 'split-chars';
 	const supportsStagger  = blockSupportsFeature( blockName, 'stagger' );
 	const supportsCountUp  = blockSupportsFeature( blockName, 'countUp' );
 	const supportsParallax = blockSupportsFeature( blockName, 'parallax' );
+	const supportsSplit    = blockSupportsFeature( blockName, 'split' );
 
 	// Filter animation options based on what this block type supports.
 	const animationOptions = ANIMATION_OPTIONS.filter( ( o ) => {
 		if ( o.value === 'count-up' && ! supportsCountUp ) return false;
 		if ( o.value === 'parallax-background' && ! supportsParallax ) return false;
+		if ( ( o.value === 'split-words' || o.value === 'split-chars' ) && ! supportsSplit ) return false;
 		return true;
 	} );
 
@@ -350,6 +353,81 @@ export function GsapAnimationControls( { attributes, setAttributes, blockName } 
 							min={ 0 }
 							max={ 3 }
 							step={ 0.1 }
+						/>
+
+						<SelectControl
+							label={ __( 'Easing', 'hm-gsap-animations' ) }
+							value={ gsapEase }
+							options={ EASE_OPTIONS }
+							onChange={ ( value ) => setAttributes( { gsapEase: value } ) }
+						/>
+					</>
+				) }
+				{ /* ── Split text controls ── */ }
+				{ hasAnimation && isSplit && (
+					<>
+						<p style={ { fontSize: '12px', color: '#757575', margin: '0 0 16px' } }>
+							{ gsapAnimation === 'split-chars'
+								? __( 'Each character animates individually. Works best on short headings.', 'hm-gsap-animations' )
+								: __( 'Each word animates individually. Works best on headings and short paragraphs.', 'hm-gsap-animations' )
+							}
+						</p>
+
+						<SelectControl
+							label={ __( 'Trigger', 'hm-gsap-animations' ) }
+							value={ gsapTrigger }
+							options={ TRIGGER_OPTIONS }
+							onChange={ ( value ) => setAttributes( { gsapTrigger: value } ) }
+						/>
+
+						{ gsapTrigger === 'scroll' && (
+							<>
+								<TextControl
+									label={ __( 'Scroll Start', 'hm-gsap-animations' ) }
+									value={ gsapScrollStart }
+									onChange={ ( value ) => setAttributes( { gsapScrollStart: value } ) }
+								/>
+								<ToggleControl
+									label={ __( 'Animate once', 'hm-gsap-animations' ) }
+									checked={ gsapAnimateOnce }
+									onChange={ ( value ) => setAttributes( { gsapAnimateOnce: value } ) }
+								/>
+								<ToggleControl
+									label={ __( 'Show markers (debug)', 'hm-gsap-animations' ) }
+									checked={ gsapShowMarkers }
+									onChange={ ( value ) => setAttributes( { gsapShowMarkers: value } ) }
+								/>
+							</>
+						) }
+
+						<Divider />
+
+						<RangeControl
+							label={ __( 'Duration per element (s)', 'hm-gsap-animations' ) }
+							value={ gsapDuration }
+							onChange={ ( value ) => setAttributes( { gsapDuration: value } ) }
+							min={ 0.1 }
+							max={ 2 }
+							step={ 0.05 }
+						/>
+
+						<RangeControl
+							label={ __( 'Delay before start (s)', 'hm-gsap-animations' ) }
+							value={ gsapDelay }
+							onChange={ ( value ) => setAttributes( { gsapDelay: value } ) }
+							min={ 0 }
+							max={ 3 }
+							step={ 0.1 }
+						/>
+
+						<RangeControl
+							label={ __( 'Stagger between elements (s)', 'hm-gsap-animations' ) }
+							help={ __( 'Delay between each word/character.', 'hm-gsap-animations' ) }
+							value={ gsapStagger || 0.05 }
+							onChange={ ( value ) => setAttributes( { gsapStagger: value } ) }
+							min={ 0.01 }
+							max={ 0.5 }
+							step={ 0.01 }
 						/>
 
 						<SelectControl

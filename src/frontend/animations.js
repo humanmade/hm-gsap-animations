@@ -2,8 +2,7 @@
  * Maps each animation type to its GSAP `gsap.from()` initial state.
  * GSAP tweens FROM these values back to the element's computed natural state.
  *
- * 'count-up' is handled separately in index.js — it animates text content,
- * not CSS properties, so it doesn't have a preset here.
+ * 'count-up' and 'split-*' are handled separately in index.js.
  */
 export const ANIMATION_PRESETS = {
 	'fade-in': { opacity: 0 },
@@ -15,4 +14,8 @@ export const ANIMATION_PRESETS = {
 	'zoom-out': { opacity: 0, scale: 1.15 },
 	'flip-x': { opacity: 0, rotateX: 90, transformPerspective: 800 },
 	'flip-y': { opacity: 0, rotateY: 90, transformPerspective: 800 },
+	// Per-word FROM state used by split-words
+	'split-words': { opacity: 0, y: 30 },
+	// Per-character FROM state used by split-chars
+	'split-chars': { opacity: 0, y: 20 },
 };

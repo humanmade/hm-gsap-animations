@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Splitting from 'splitting';
 import { ANIMATION_PRESETS } from './animations';
 
 gsap.registerPlugin( ScrollTrigger );
@@ -174,6 +175,55 @@ function initCountUpAnimation( element ) {
 }
 
 /**
+ * Split-text animation (split-words / split-chars).
+ *
+ * Uses Splitting.js to wrap each word or character in a <span> at runtime.
+ * This happens only on the frontend — the saved HTML is never modified, so
+ * there is no conflict with the block editor.
+ *
+ * Limitation: character splitting across nested HTML tags (e.g. <strong>)
+ * may produce unexpected results. Word splitting handles nested tags correctly.
+ */
+function initSplitAnimation( element ) {
+	const animation = element.dataset.gsapAnimation; // 'split-words' | 'split-chars'
+	const by        = animation === 'split-chars' ? 'chars' : 'words';
+	const preset    = ANIMATION_PRESETS[ animation ];
+
+	const [ result ] = Splitting( { target: element, by } );
+	const targets    = result[ by ];
+
+	if ( ! targets?.length ) return;
+
+	const duration    = parseFloat( element.dataset.gsapDuration ) || 0.6;
+	const delay       = parseFloat( element.dataset.gsapDelay ) || 0;
+	const ease        = element.dataset.gsapEase || 'power2.out';
+	const stagger     = parseFloat( element.dataset.gsapStagger ) || 0.05;
+	const trigger     = element.dataset.gsapTrigger || 'scroll';
+	const scrollStart = element.dataset.gsapScrollStart || 'top 80%';
+	const animateOnce = element.dataset.gsapAnimateOnce !== 'false';
+	const showMarkers = element.dataset.gsapShowMarkers === 'true';
+
+	const tweenVars = {
+		...preset,
+		duration,
+		delay,
+		ease,
+		stagger,
+	};
+
+	if ( trigger === 'scroll' ) {
+		tweenVars.scrollTrigger = {
+			trigger: element,
+			start: scrollStart,
+			markers: showMarkers,
+			once: animateOnce,
+		};
+	}
+
+	gsap.from( targets, tweenVars );
+}
+
+/**
  * Parallax background animation.
  *
  * Two strategies depending on the block type:
@@ -234,7 +284,9 @@ function initGsapAnimations() {
 	document.querySelectorAll( '[data-gsap-animation]' ).forEach( ( element ) => {
 		const animation = element.dataset.gsapAnimation;
 
-		if ( animation === 'parallax-background' ) {
+		if ( animation === 'split-words' || animation === 'split-chars' ) {
+			initSplitAnimation( element );
+		} else if ( animation === 'parallax-background' ) {
 			initParallaxAnimation( element );
 		} else if ( animation === 'count-up' ) {
 			initCountUpAnimation( element );

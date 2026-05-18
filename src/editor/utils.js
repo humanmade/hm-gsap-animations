@@ -4,6 +4,7 @@ import {
 	STAGGER_SUPPORTED_BLOCKS,
 	COUNT_UP_SUPPORTED_BLOCKS,
 	PARALLAX_SUPPORTED_BLOCKS,
+	SPLIT_SUPPORTED_BLOCKS,
 } from './constants';
 
 /**
@@ -60,6 +61,7 @@ export function blockSupportsFeature( name, feature ) {
 		stagger: STAGGER_SUPPORTED_BLOCKS,
 		parallax: PARALLAX_SUPPORTED_BLOCKS,
 		countUp: COUNT_UP_SUPPORTED_BLOCKS,
+		split: SPLIT_SUPPORTED_BLOCKS,
 	};
 
 	if ( coreLists[ feature ]?.includes( name ) ) return true;

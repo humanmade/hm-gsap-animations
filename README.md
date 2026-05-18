@@ -40,9 +40,17 @@ The animation progress is tied 1-to-1 to the scroll position between **Start** a
 | `flip-y` | 3D vertical vertical flip |
 | `count-up` | Counts a number from 0 to the block's value *(heading + paragraph only)* |
 | `parallax-background` | Background image moves at a different speed than the scroll *(cover, group, column, media-text)* |
+| `split-words` | Each word enters individually with stagger *(heading + paragraph only)* |
+| `split-chars` | Each character enters individually with stagger *(heading + paragraph only)* |
 
 ### Count-up
 Inspired by [Counting Number Block](https://wordpress.org/plugins/counting-number-block/). Finds the first number in the block's text and animates it from 0, preserving any prefix/suffix text (e.g. `"Over 5,000 clients"` → `"Over 0 clients"` → `"Over 5,000 clients"`).
+
+### Split text
+
+Uses [Splitting.js](https://splitting.js.org/) to wrap each word or character in a `<span>` **at runtime on the frontend only** — the saved HTML is never modified, so there is no conflict with the block editor or with React. Supports the same trigger/stagger/ease controls as other animations.
+
+> **Limitation:** character splitting (`split-chars`) across nested HTML tags (e.g. `<strong>bold</strong>`) may produce unexpected results. Word splitting handles nested tags correctly.
 
 ### Parallax background
 For `core/cover`: animates the inner `<img>`/`<video>` via `yPercent`. For blocks with a CSS `background-image` (group, column): animates `backgroundPositionY`. Both use GSAP ScrollTrigger scrub.
@@ -64,6 +72,7 @@ For `core/cover`: animates the inner `<img>`/`<video>` via `yPercent`. For block
 | Animate once | Scroll trigger only |
 | Duration / Delay / Easing | Transition and count-up |
 | Stagger children | group, columns, gallery, list, buttons |
+| Stagger between elements (s) | split-words, split-chars |
 
 ---
 
@@ -81,21 +90,21 @@ When an animation is selected, the block plays a lightweight **CSS preview** in 
 
 ## Supported blocks (out of the box)
 
-| Block | Stagger | Count-up | Parallax |
-|---|---|---|---|
-| `core/group` | ✅ | — | ✅ |
-| `core/columns` | ✅ | — | — |
-| `core/column` | — | — | ✅ |
-| `core/paragraph` | — | ✅ | — |
-| `core/heading` | — | ✅ | — |
-| `core/image` | — | — | — |
-| `core/gallery` | ✅ | — | — |
-| `core/cover` | — | — | ✅ |
-| `core/media-text` | — | — | ✅ |
-| `core/list` | ✅ | — | — |
-| `core/buttons` | ✅ | — | — |
-| `core/quote` | — | — | — |
-| `core/separator` | — | — | — |
+| Block | Stagger | Count-up | Parallax | Split |
+|---|---|---|---|---|
+| `core/group` | ✅ | — | ✅ | — |
+| `core/columns` | ✅ | — | — | — |
+| `core/column` | — | — | ✅ | — |
+| `core/paragraph` | — | ✅ | — | ✅ |
+| `core/heading` | — | ✅ | — | ✅ |
+| `core/image` | — | — | — | — |
+| `core/gallery` | ✅ | — | — | — |
+| `core/cover` | — | — | ✅ | — |
+| `core/media-text` | — | — | ✅ | — |
+| `core/list` | ✅ | — | — | — |
+| `core/buttons` | ✅ | — | — | — |
+| `core/quote` | — | — | — | — |
+| `core/separator` | — | — | — | — |
 
 ---
 
@@ -149,6 +158,7 @@ This enables all standard animations (fade, zoom, flip, scrub). To also enable s
 | `stagger` | "Animate children one by one" toggle in the Inspector |
 | `countUp` | `count-up` option in the animation dropdown |
 | `parallax` | `parallax-background` option in the animation dropdown |
+| `split` | `split-words` and `split-chars` options in the animation dropdown |
 
 > **How it works:** On the PHP side, `get_all_supported_blocks()` scans `WP_Block_Type_Registry` at enqueue time and auto-includes any block with `hmGsapAnimations` in its supports. On the JS side, the `blocks.registerBlockType` filter reads `settings.supports.hmGsapAnimations` at registration time, and the HOCs use `getBlockType(name)?.supports?.hmGsapAnimations` at render time.
 

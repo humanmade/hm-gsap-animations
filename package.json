@@ -17,6 +17,7 @@
 		"@wordpress/scripts": "^30.10.0"
 	},
 	"dependencies": {
-		"gsap": "^3.12.5"
+		"gsap": "^3.12.5",
+		"splitting": "^1.0.6"
 	}
 }

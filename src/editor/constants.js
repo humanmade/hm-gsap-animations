@@ -18,6 +18,15 @@ export const COUNT_UP_SUPPORTED_BLOCKS = [
 ];
 
 /**
+ * Blocks that support split-text animations (split-words, split-chars).
+ * Only makes sense for text blocks.
+ */
+export const SPLIT_SUPPORTED_BLOCKS = [
+	'core/heading',
+	'core/paragraph',
+];
+
+/**
  * Blocks that support parallax-background.
  * core/cover  → animates the inner <img>/<video> element via yPercent.
  * Others      → animates backgroundPositionY on the block wrapper.
@@ -42,6 +51,8 @@ export const ANIMATION_OPTIONS = [
 	{ value: 'flip-y', label: 'Flip Vertical' },
 	{ value: 'count-up', label: 'Count Up (numbers)' },
 	{ value: 'parallax-background', label: 'Parallax Background' },
+	{ value: 'split-words', label: 'Split — Words' },
+	{ value: 'split-chars', label: 'Split — Characters' },
 ];
 
 /**
