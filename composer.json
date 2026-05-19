@@ -1,0 +1,15 @@
+{
+	"name": "humanmade/hm-gsap-animations",
+	"description": "GSAP animation controls for the WordPress block editor.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Human Made Limited",
+			"homepage": "https://humanmade.com"
+		}
+	],
+	"require": {
+		"php": ">=7.4"
+	}
+}
