@@ -1,5 +1,11 @@
 # HM GSAP Animations
 
+
+
+https://github.com/user-attachments/assets/dcd40c06-0d4c-4335-a7a6-c265751a5888
+
+
+
 Adds GSAP animation controls to core WordPress blocks via the Gutenberg block editor. Editors pick animation, mode, trigger, timing, and stagger directly from the Inspector panel — no code required.
 
 Inspired by [C9 Animation for Blocks](https://c9.covertnine.com/c9-animation-plugin/) (scrub mode, keyframe markers) and [Counting Number Block](https://wordpress.org/plugins/counting-number-block/) (count-up, animate-once, reduced motion).
