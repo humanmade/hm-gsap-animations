@@ -2,6 +2,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Splitting from 'splitting';
 import { ANIMATION_PRESETS, HOVER_PRESETS } from './animations';
+import './index.css';
 
 gsap.registerPlugin( ScrollTrigger );
 

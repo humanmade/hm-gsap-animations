@@ -1,0 +1,25 @@
+/**
+ * Frontend styles, loaded with the frontend script.
+ */
+
+/*
+ * Parallax on core/cover moves the background media by ±(speed / 2)% of its
+ * own height. WordPress sizes that media to exactly fill the cover, so the
+ * movement exposed an empty strip at the top or bottom. Making it 30% taller
+ * (15% each side) covers the movement for speeds up to 30.
+ */
+.wp-block-cover[data-gsap-animation="parallax-background"] .wp-block-cover__image-background,
+.wp-block-cover[data-gsap-animation="parallax-background"] .wp-block-cover__video-background {
+	top: -15%;
+	height: 130%;
+}
+
+/*
+ * Splitting.js wraps words and characters in inline spans, and transforms
+ * don't apply to inline elements, so the split-text presets only faded in
+ * instead of also moving up. Splitting.js's own stylesheet sets this.
+ */
+[data-gsap-animation^="split-"] .word,
+[data-gsap-animation^="split-"] .char {
+	display: inline-block;
+}

@@ -106,16 +106,20 @@ function enqueue_editor_assets(): void {
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\enqueue_editor_assets' );
 
 /**
- * Enqueue frontend script.
+ * Register the frontend script and styles.
+ *
+ * They are only enqueued (see enqueue_frontend_assets()) when a block on the
+ * page actually has an animation, so pages without animations don't load
+ * GSAP, ScrollTrigger and Splitting.js.
  */
-function enqueue_frontend_assets(): void {
+function register_frontend_assets(): void {
 	$asset_file = PLUGIN_PATH . '/build/frontend.asset.php';
 	if ( ! file_exists( $asset_file ) ) {
 		return;
 	}
 	$asset = require $asset_file;
 
-	wp_enqueue_script(
+	wp_register_script(
 		'hm-gsap-animations-frontend',
 		plugins_url( 'build/frontend.js', __FILE__ ),
 		$asset['dependencies'],
@@ -124,7 +128,7 @@ function enqueue_frontend_assets(): void {
 	);
 
 	if ( file_exists( PLUGIN_PATH . '/build/frontend.css' ) ) {
-		wp_enqueue_style(
+		wp_register_style(
 			'hm-gsap-animations-frontend',
 			plugins_url( 'build/frontend.css', __FILE__ ),
 			[],
@@ -132,7 +136,22 @@ function enqueue_frontend_assets(): void {
 		);
 	}
 }
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_frontend_assets' );
+add_action( 'init', __NAMESPACE__ . '\\register_frontend_assets' );
+
+/**
+ * Enqueue the frontend script and styles. Called while rendering an animated
+ * block; block themes render the template before wp_head, and classic themes
+ * print late-enqueued footer scripts and styles in wp_footer.
+ */
+function enqueue_frontend_assets(): void {
+	if ( is_admin() ) {
+		return;
+	}
+	wp_enqueue_script( 'hm-gsap-animations-frontend' );
+	if ( wp_style_is( 'hm-gsap-animations-frontend', 'registered' ) ) {
+		wp_enqueue_style( 'hm-gsap-animations-frontend' );
+	}
+}
 
 /**
  * Inject GSAP data attributes into the first HTML element of a rendered block.
@@ -150,6 +169,8 @@ function inject_gsap_data_attributes( string $block_content, array $block ): str
 	if ( 'none' === $animation || empty( $animation ) || empty( $block_content ) ) {
 		return $block_content;
 	}
+
+	enqueue_frontend_assets();
 
 	$data_attrs = build_data_attrs_string( $block['attrs'] );
 

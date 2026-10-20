@@ -5,8 +5,8 @@
 	"author": "Human Made Limited",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
-		"build": "webpack --config webpack.config.js",
-		"start": "webpack --config webpack.config.js --watch",
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
